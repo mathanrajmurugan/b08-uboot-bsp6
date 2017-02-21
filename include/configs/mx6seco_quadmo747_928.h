@@ -71,7 +71,7 @@
 #endif
 
 #ifdef CONFIG_SYS_USE_SPINOR
-#define CONFIG_SF_DEFAULT_CS                     (0|(IMX_GPIO_NR(4, 9)<<8))
+#define CONFIG_SF_DEFAULT_CS                     (0|(IMX_GPIO_NR(3, 19)<<8))
 #endif
 
 #endif

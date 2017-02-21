@@ -70,7 +70,12 @@ static void setup_iomux_uart (void) {
 
 static void setup_spinor(void) {
 	imx_iomux_v3_setup_multiple_pads(ecspi1_pads, ARRAY_SIZE(ecspi1_pads));
-	gpio_direction_output(IMX_GPIO_NR(4, 9), 0);
+	gpio_direction_output(IMX_GPIO_NR(3, 19), 0);
+}
+
+int board_spi_cs_gpio(unsigned bus, unsigned cs)
+{
+	return (bus == 0 && cs == 0) ? (IMX_GPIO_NR(3, 19)) : cs >> 8;
 }
 
 #endif   /*  CONFIG_SYS_USE_SPINOR  */

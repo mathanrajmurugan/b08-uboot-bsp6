@@ -85,6 +85,11 @@ static void setup_spinor(void) {
 	gpio_direction_output(IMX_GPIO_NR(2, 30), 0);
 }
 
+int board_spi_cs_gpio(unsigned bus, unsigned cs)
+{
+	return (bus == 0 && cs == 0) ? (IMX_GPIO_NR(2, 30)) : cs >> 8;
+}
+
 #endif   /*  CONFIG_SYS_USE_SPINOR  */
 /*  __________________________________________________________________________
  * |__________________________________________________________________________|
