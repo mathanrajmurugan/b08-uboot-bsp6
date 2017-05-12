@@ -128,6 +128,8 @@
 */
 #ifdef CONFIG_MX6Q
 	#define CONFIG_SECO_PROMPT                   "MX6Q Q7 U-Boot > "
+#elif defined (CONFIG_MX6QP)
+	#define CONFIG_SECO_PROMPT                   "MX6QP Q7 U-Boot > "
 #elif defined (CONFIG_MX6DL)
 	#define CONFIG_SECO_PROMPT                   "MX6DL Q7 U-Boot > "
 #elif defined (CONFIG_MX6S)

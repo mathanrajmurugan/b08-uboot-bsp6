@@ -21,6 +21,10 @@ config SYS_BOARD
 choice
 	prompt "SECO i.MX6 SoC variant"
 
+	config SECOMX6QP
+                bool "i.MX6QP"
+                select MX6QP
+
 	config SECOMX6Q
 		bool "i.MX6Q"
 		select MX6Q
@@ -77,9 +81,11 @@ config IMX_CONFIG
 config DEFAULT_FDT_FILE
 	string
 	default "imx6q-seco_quadmo747_928.dtb"    if TARGET_MX6SECO_Q7_928 && SECOMX6Q
+	default "imx6qp-seco_quadmo747_928.dtb"	  if TARGET_MX6SECO_Q7_928 && SECOMX6QP
 	default "imx6q-seco_uq7_962.dtb"          if TARGET_MX6SECO_UQ7_962 && SECOMX6Q
 	default "imx6q-seco_uq7-j_A75.dtb"        if TARGET_MX6SECO_UQ7_J_A75 && SECOMX6Q
 	default "imx6q-seco_SBC_A62.dtb"	  if TARGET_MX6SECO_USBC_A62 && SECOMX6Q
+	default "imx6qp-seco_SBC_A62.dtb"	  if TARGET_MX6SECO_USBC_A62 && SECOMX6QP
 	default "imx6dl-seco_quadmo747_928.dtb"   if TARGET_MX6SECO_Q7_928 && (SECOMX6DL || SECOMX6S)
 	default "imx6dl-seco_uq7_962.dtb"         if TARGET_MX6SECO_UQ7_962 && (SECOMX6DL || SECOMX6S)
 	default "imx6dl-seco_uq7-j_A75.dtb"       if TARGET_MX6SECO_UQ7_J_A75 && (SECOMX6DL || SECOMX6S)

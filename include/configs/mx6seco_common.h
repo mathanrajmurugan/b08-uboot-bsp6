@@ -163,7 +163,7 @@
 
 #elif defined CONFIG_SECOMX6_4GB_8x512
 
-	#define CONFIG_DDR_MB 4096
+	#define CONFIG_DDR_MB 3800
 	#define CONFIG_DDR_64BIT
 	#define PHYS_SDRAM_SIZE        (4u * 1024 * 1024 * 1024 - 256u * 1024 * 1024)
 

@@ -13,6 +13,8 @@ config MX6DL
 config MX6Q
 	bool
 
+config MX6QP
+        bool
 config MX6QDL
 	bool
 

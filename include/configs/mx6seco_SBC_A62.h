@@ -22,7 +22,7 @@
 #define MACH_SECO_TYPE                           4800
 #define CONFIG_MACH_TYPE                         MACH_SECO_TYPE
 
-#ifdef CONFIG_MX6Q
+#if defined CONFIG_MX6Q || defined CONFIG_MX6QP
 	#define CONFIG_MX6Q_SECO_A62
 #elif defined (CONFIG_MX6DL)
 	#define CONFIG_MX6DL_SECO_A62
@@ -154,6 +154,8 @@
 */
 #ifdef CONFIG_MX6Q
 	#define CONFIG_SECO_PROMPT                   "MX6Q SBC U-Boot > "
+#elif defined (CONFIG_MX6QP)
+        #define CONFIG_SECO_PROMPT                   "MX6QP SBC U-Boot > "
 #elif defined (CONFIG_MX6DL)
 	#define CONFIG_SECO_PROMPT                   "MX6DL SBC U-Boot > "
 #elif defined (CONFIG_MX6S)
