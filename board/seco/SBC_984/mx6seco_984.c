@@ -7,12 +7,10 @@
  */
 
 
-#include "pin_muxing_A75.h"
+#include "pin_muxing_984.h"
 #include "../common/proto_seco.h"
 
-#define MX6_GPIO_BOOT_VALIDATE                   IMX_GPIO_NR(2, 4)
-
-
+#define MX6_GPIO_BOOT_VALIDATE    IMX_GPIO_NR(2, 4)
 
 
 /* I2C1 - Embedded Controller */
@@ -45,17 +43,17 @@ struct i2c_pads_info i2c_pad_info1 = {
 };
 
 
-/* I2C2 - Q7 connector */
+/* I2C3 - Camera connector pins */
 struct i2c_pads_info i2c_pad_info2 = {
 	.scl = {
 		.i2c_mode  = MX6_PAD_GPIO_5__I2C3_SCL   | PC,
 		.gpio_mode = MX6_PAD_GPIO_5__GPIO1_IO05 | PC,
 		.gp        = IMX_GPIO_NR(1, 5),
 	},
-	.sda = {
-		.i2c_mode  = MX6_PAD_GPIO_16__I2C3_SDA   | PC,
-		.gpio_mode = MX6_PAD_GPIO_16__GPIO7_IO11 | PC,
-		.gp        = IMX_GPIO_NR(7, 11),
+	.sda = { 
+		.i2c_mode  = MX6_PAD_GPIO_6__I2C3_SDA   | PC,
+		.gpio_mode = MX6_PAD_GPIO_6__GPIO1_IO06 | PC,
+		.gp        = IMX_GPIO_NR(1, 6),
 	},
 };
 
@@ -69,8 +67,10 @@ void ldo_mode_set(int ldo_bypass) {}
 
 int dram_init (void) {
 	gd->ram_size = ((ulong)CONFIG_DDR_MB * 1024 * 1024);
+
 	return 0;
 }
+
 
 
 
@@ -114,6 +114,9 @@ int board_spi_cs_gpio(unsigned bus, unsigned cs)
 
 
 
+
+
+
 /*  __________________________________________________________________________
  * |                                                                          |
  * |                                   ETHERNET                               |
@@ -134,31 +137,26 @@ inline void enable_ethernet_rail (void) {
  */
 #ifdef CONFIG_FSL_ESDHC
 
-
-#define USDHC4_CD_GPIO	                          IMX_GPIO_NR(2, 6)
-#define USDHC4_PWR_GPIO                           IMX_GPIO_NR(2, 5)
-
 boot_mem_dev_t boot_mem_dev_list[SECO_NUM_BOOT_DEV] = {
 	{ 0x3, 0x3, -1,  -1,  0, "SPI Nor" },
-	{ 0x4, 0x5, -1,   0, -1, "External SD" },
 	{ 0x6, 0x7, -1,  -1, -1, "eMMC" },
 };
 
 
 struct fsl_esdhc_cfg usdhc_cfg[CONFIG_SYS_FSL_USDHC_NUM] = {
 	{USDHC3_BASE_ADDR, 0, 8},
-	{USDHC4_BASE_ADDR, 0, 4},
+	
 };
 
 struct usdhc_l usdhc_list[CONFIG_SYS_FSL_USDHC_NUM] = {
-	{usdhc3_pads, ARRAY_SIZE(usdhc3_pads), -1, -1},
-	{usdhc4_pads, ARRAY_SIZE(usdhc4_pads), USDHC4_CD_GPIO, USDHC4_PWR_GPIO},
+	{usdhc3_pads, ARRAY_SIZE(usdhc3_pads), -1},
+	
 };
 
 
 enum mxc_clock usdhc_clk[CONFIG_SYS_FSL_USDHC_NUM] = {
 	MXC_ESDHC3_CLK,
-	MXC_ESDHC4_CLK,
+	
 };
 
 /* map the usdhc controller id to the devno given to the board device */
@@ -171,9 +169,7 @@ int board_mmc_getcd (struct mmc *mmc) {
 	int ret = 0;
 
 	switch (cfg->esdhc_base) {
-		case USDHC4_BASE_ADDR:
-			ret = !gpio_get_value(USDHC4_CD_GPIO);
-			break;
+		
 		case USDHC3_BASE_ADDR:
 			ret = 1; /* eMMC/uSDHC4 is always present */
 			break;
@@ -256,6 +252,7 @@ int board_ehci_power (int port, int on) {
 }
 
 #endif  /*  CONFIG_USB_EHCI_MX6  */
+
 /*  __________________________________________________________________________
  * |__________________________________________________________________________|
  */
@@ -263,9 +260,11 @@ int board_ehci_power (int port, int on) {
 
 /*  __________________________________________________________________________
  * |                                                                          |
- * |                            DISPLAY INFO - INIT                           |
+ * |                                 DISPLAY INFO                             |
  * |__________________________________________________________________________|
  */
+
+
 /*
  * Do not overwrite the console
  * Use always serial for U-Boot console
@@ -274,13 +273,11 @@ int overwrite_console (void) {
 	return 1;
 }
 
-
 #ifdef CONFIG_SECO_BOARD_NAME
 char *board_name = CONFIG_SECO_BOARD_NAME;
 #else
-char *board_name = "Seco uQ7-i.MX6 (uQ7-J) - A75";
+char *board_name = "Seco SBC-i.MX6  - 984";
 #endif
-
 
 int board_early_init_f (void) {
 
@@ -293,8 +290,19 @@ int board_early_init_f (void) {
 	return 0;
 }
 
+#define I2C_PMIC                                 0x1
+
+#ifdef CONFIG_SYS_I2C_MXC
+	static struct pmic *pfuze;
+#endif
 
 int board_init (void) {
+
+#ifdef CONFIG_SYS_I2C_MXC
+	int s, i;
+	u8 *boardrev = NULL;
+#endif
+	
 	/* address of boot parameters */
 	gd->bd->bi_boot_params = PHYS_SDRAM + 0x100;
 
@@ -308,29 +316,44 @@ int board_init (void) {
 	setup_sata();
 #endif
 
+#ifdef CONFIG_SYS_I2C_MXC
+	s = get_seco_board_revision(&i2c_pad_info0, &boardrev);
+	for ( i = 0 ; i < s ; i++ )
+		gd->bd->board_revision[i] = boardrev[i];
+
+	printf ("ID: 9%X, rev %c%X\n", gd->bd->board_revision[1],
+		((gd->bd->board_revision[0] & 0xF0) >> 4) + 'a',
+		(gd->bd->board_revision[0] & 0x0F));
+	
+	setup_i2c (I2C_PMIC, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info1);
+	pfuze = pfuze_common_init(I2C_PMIC);
+       
+#endif
+	
 	print_boot_device ();
 
 	return 0;
 }
 
-
 #ifdef CONFIG_CMD_BMODE
 static const struct boot_mode board_boot_modes[] = {
-	/* 4 bit bus width */
-	{"sd3",	 MAKE_CFGVAL(0x40, 0x30, 0x00, 0x00)},
 	/* 8 bit bus width */
 	{"emmc", MAKE_CFGVAL(0x60, 0x58, 0x00, 0x00)},
 	{NULL,	 0},
 };
 #endif
 
-
 int board_late_init (void) {
-
 	int ret = 0;
 
 #ifdef CONFIG_CMD_BMODE
 	add_board_boot_modes(board_boot_modes);
+#endif
+
+#ifdef CONFIG_PFUZE100_PMIC_I2C
+	ret = setup_pmic_voltages(&i2c_pad_info1);
+	if (ret)
+		return -1;
 #endif
 
 #ifdef CONFIG_ENV_IS_IN_MMC
@@ -339,17 +362,12 @@ int board_late_init (void) {
 
 	return ret;
 }
-/*  __________________________________________________________________________
- * |__________________________________________________________________________|
- */
 
 
-
-
-
-
-
-
+static void setup_pcie(void)
+{
+	
+}
 
 
 

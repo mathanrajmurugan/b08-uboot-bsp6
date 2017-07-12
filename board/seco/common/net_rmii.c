@@ -110,7 +110,6 @@ void setup_iomux_enet () {
 
 	gpio_set_value (IMX_GPIO_NR(1, 3), 1); /* deassert PHY rst */
 
-	printf ("dadadsjkkljdlkas\n");
 	/* Need delay 100ms to exit from reset. */
 	udelay (1000 * 100);
 }

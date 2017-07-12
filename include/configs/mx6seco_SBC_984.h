@@ -6,8 +6,8 @@
  * SPDX-License-Identifier:     GPL-2.0+
  */
 
-#ifndef __MX6_UQ7_J_A75_CONFIG_H
-#define __MX6_UQ7_J_A75_CONFIG_H
+#ifndef __MX6_SBC_984_CONFIG_H
+#define __MX6_SBC_984_CONFIG_H
 
 #include <asm/arch/imx-regs.h>
 #include <asm/imx-common/gpio.h>
@@ -19,15 +19,15 @@
    |                            BOARD CONFIGURATION                             |
    |____________________________________________________________________________|
 */
-#define MACH_SECO_TYPE                           4900
-#define CONFIG_MACH_TYPE                         MACH_SECO_TYPE
+#define MACH_SECO_TYPE                 4700
+#define CONFIG_MACH_TYPE               MACH_SECO_TYPE
 
 #ifdef CONFIG_MX6Q
-	#define CONFIG_MX6Q_SECO_A75
+	#define CONFIG_MX6Q_SECO_984
 #elif defined (CONFIG_MX6DL)
-	#define CONFIG_MX6DL_SECO_A75
+	#define CONFIG_MX6DL_SECO_984
 #elif defined (CONFIG_MX6S)
-	#define CONFIG_MX6S_SECO_A75
+	#define CONFIG_MX6S_SECO_984
 #endif
 
 
@@ -36,24 +36,22 @@
 #define CONFIG_SYS_USE_I2C_BUS
 #define CONFIG_SYS_USE_SATA
 #define CONFIG_SYS_USE_ETHERNET
-#define CONFIG_ENV_IS_IN_MMC
 
 
 /*  SECO COMPILATION MODULES */
 #define CONFIG_SECO_COMMON_BOARD                 1
 #define CONFIG_SECO_COMMON_USDHC                 1
-#define CONFIG_SECO_COMMON_RGMII                 0
-#define CONFIG_SECO_COMMON_RMII                  1
+#define CONFIG_SECO_COMMON_RGMII                 1
+#define CONFIG_SECO_COMMON_RMII                  0
 #define CONFIG_SECO_COMMON_PFUZE                 1
 #define CONFIG_SECO_COMMON_DISPLAY               0
 
 
 /* Boot device:
  * 	eMMC
- * 	external SD
  * 	SPI Flash
  */
-#define SECO_NUM_BOOT_DEV                        3
+#define SECO_NUM_BOOT_DEV			2
 
 
 /* ____________________________________________________________________________
@@ -61,8 +59,8 @@
   |                                   DEBUG UART                               |
   |____________________________________________________________________________|
 */
-#define CONFIG_MXC_UART_BASE                     UART2_BASE
-#define CONFIG_CONSOLE_DEV                       "ttymxc1"
+#define CONFIG_MXC_UART_BASE            UART2_BASE
+#define CONFIG_CONSOLE_DEV              "ttymxc1"
 
 
 
@@ -75,11 +73,11 @@
 
 #ifdef CONFIG_SYS_USE_SPINOR
 	#define CONFIG_SPI_FLASH_SST
-	#define CONFIG_SF_DEFAULT_BUS                0
+	#define CONFIG_SF_DEFAULT_BUS          0
 #endif
 
 #ifdef CONFIG_SYS_USE_SPINOR
-	#define CONFIG_SF_DEFAULT_CS                 (0|(IMX_GPIO_NR(3, 19)<<8))
+	#define CONFIG_SF_DEFAULT_CS          (0|(IMX_GPIO_NR(3, 19)<<8))
 #endif
 
 #endif
@@ -92,19 +90,16 @@
 */
 #ifdef CONFIG_SYS_USE_I2C_BUS
 
-	#define CONFIG_SYS_I2C_BASE                  I2C1_BASE_ADDR
-	#define CONFIG_SYS_I2C_SPEED                 100000
-
+	#define CONFIG_SYS_I2C_BASE                   I2C1_BASE_ADDR
+	#define CONFIG_SYS_I2C_SPEED                  100000
 
 	/* PMIC */
-	#define CONFIG_PFUZE100_PMIC_I2C
-	#ifdef CONFIG_PFUZE100_PMIC_I2C
-		#define CONFIG_PMIC_I2C_BUS		         1
-		#define CONFIG_PMIC_I2C_SLAVE		     0x8
-	#endif
+	#define CONFIG_POWER
+	#define CONFIG_POWER_I2C
+	#define CONFIG_POWER_PFUZE100
+	#define CONFIG_POWER_PFUZE100_I2C_ADDR       0x08
 
 #endif
-
 
 
 /* ____________________________________________________________________________
@@ -114,8 +109,8 @@
 */
 #ifdef CONFIG_SYS_USE_SATA
 
-	#define CONFIG_SYS_SATA_MAX_DEVICE           1
-	#define CONFIG_DWC_AHSATA_PORT_ID            0
+	#define CONFIG_SYS_SATA_MAX_DEVICE            1
+	#define CONFIG_DWC_AHSATA_PORT_ID             0
 
 #endif
 
@@ -128,9 +123,10 @@
 */
 #ifdef CONFIG_SYS_USE_ETHERNET
 
-	#define CONFIG_FEC_XCV_TYPE		             RMII
-	#define CONFIG_FEC_MXC_PHYADDR		         0
+	#define CONFIG_FEC_XCV_TYPE		RGMII
+	#define CONFIG_FEC_MXC_PHYADDR		6
 	#define CONFIG_PHY_MICREL
+	#define CONFIG_KSZ9031_FIX_100MB
 
 #endif
 
@@ -142,20 +138,13 @@
   |____________________________________________________________________________|
 */
 #ifdef CONFIG_MX6Q
-	#define CONFIG_SECO_PROMPT                   "MX6Q uQ7-J U-Boot > "
+	#define CONFIG_SECO_PROMPT                    "MX6Q SBC U-Boot > "
 #elif defined (CONFIG_MX6DL)
-	#define CONFIG_SECO_PROMPT                   "MX6DL uQ7-J U-Boot > "
+	#define CONFIG_SECO_PROMPT                    "MX6DL SBC U-Boot > "
 #elif defined (CONFIG_MX6S)
-	#define CONFIG_SECO_PROMPT                   "MX6S uQ7-J U-Boot > "
+	#define CONFIG_SECO_PROMPT                    "MX6S SBC U-Boot > "
 #endif
 
-
-
-/* ____________________________________________________________________________
-  |                                                                            |
-  |                                    DISPLAY                                 |
-  |____________________________________________________________________________|
-*/
 
 
 /* ____________________________________________________________________________
@@ -176,14 +165,13 @@
 
 
 
-#define CONFIG_BOOT_ID_EMMC                      0
-#define CONFIG_BOOT_ID_EXT_SD                    1
+#define CONFIG_BOOT_ID_EMMC     0
 
-#define CONFIG_ROOT_ID_EMMC                      0
-#define CONFIG_ROOT_ID_EXT_SD                    1
+#define CONFIG_ROOT_ID_EMMC     0
 
 
-#define CONFIG_MMCROOT                           "/dev/mmcblk0p3"  /* SDHC3 */
+
+#define CONFIG_MMCROOT			"/dev/mmcblk0p2"  /* SDHC4 */
 
 #include "mx6seco_common.h"
 
@@ -195,13 +183,13 @@
 #define CONFIG_EHCI_HCD_INIT_AFTER_RESET
 #define CONFIG_USB_HOST_ETHER
 #define CONFIG_USB_ETHER_ASIX
-#define CONFIG_MXC_USB_PORTSC                    (PORT_PTS_UTMI | PORT_PTS_PTW)
-#define CONFIG_MXC_USB_FLAGS                     0
-#define CONFIG_USB_MAX_CONTROLLER_COUNT          2       /* Enabled USB controller number */
+#define CONFIG_MXC_USB_PORTSC                   (PORT_PTS_UTMI | PORT_PTS_PTW)
+#define CONFIG_MXC_USB_FLAGS                    0
+#define CONFIG_USB_MAX_CONTROLLER_COUNT         2       /* Enabled USB controller number */
 
-#define CONFIG_SYS_FSL_USDHC_NUM                 2
-#define CONFIG_SYS_MMC_ENV_DEV                   0	     /* SDHC1 */
-#define CONFIG_SYS_MMC_ENV_PART                  0       /* user partition */
+#define CONFIG_SYS_FSL_USDHC_NUM                1
+#define CONFIG_SYS_MMC_ENV_DEV                  0	/* SDHC1 */
+#define CONFIG_SYS_MMC_ENV_PART                 0       /* user partition */
 
 
 /*
@@ -221,8 +209,8 @@
 #define CONFIG_PCI_PNP
 #define CONFIG_PCI_SCAN_SHOW
 #define CONFIG_PCIE_IMX
-#define CONFIG_PCIE_IMX_PERST_GPIO	             IMX_GPIO_NR(7, 12)
-#define CONFIG_PCIE_IMX_POWER_GPIO	             IMX_GPIO_NR(3, 19)
+#define CONFIG_PCIE_IMX_PERST_GPIO	IMX_GPIO_NR(7, 12)
+#define CONFIG_PCIE_IMX_POWER_GPIO	IMX_GPIO_NR(3, 19)
 #endif
 
-#endif                       /*  __MX6_UQ7_J_A75_CONFIG_H  */
+#endif                         /* __MX6_QUADMO_747_CONFIG_H */

@@ -100,7 +100,11 @@ int mmc_get_env_devno (void) {
 		/* BOOT_CFG2[3] and BOOT_CFG2[4] */
 		dev_no = (soc_sbmr & 0x00001800) >> 11;	
 	}
+#if defined CONFIG_ENV_IS_IN_MMC
 	
+	if((soc_sbmr & 0x00000010) >> 4 == 0x1 ) 
+		return CONFIG_BOOT_ID_EMMC;
+#endif 
 	return usdhc_devno[dev_no];
 }
 

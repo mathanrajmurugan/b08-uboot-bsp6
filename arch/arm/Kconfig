@@ -546,6 +546,11 @@ config TARGET_MX6SECO_USBC_A62
 	select SECO_SYSTEM
 	select SUPPORT_SPL
 
+config TARGET_MX6SECO_USBC_984
+	bool "Support Seco uSBC (984) Board"
+	select CPU_V7
+	select SECO_SYSTEM
+	select SUPPORT_SPL
 
 config TARGET_MX6SECO_UQ7_J_A75
 	bool "Support Seco uQ7-J (A75) Board"

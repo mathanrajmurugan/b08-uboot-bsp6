@@ -1,4 +1,4 @@
-if TARGET_MX6SECO_Q7_928 || TARGET_MX6SECO_UQ7_962 || TARGET_MX6SECO_USBC_A62 || TARGET_MX6SECO_UQ7_J_A75
+if TARGET_MX6SECO_Q7_928 || TARGET_MX6SECO_UQ7_962 || TARGET_MX6SECO_USBC_A62 || TARGET_MX6SECO_USBC_984 || TARGET_MX6SECO_UQ7_J_A75
 
 
 config SYS_SOC
@@ -14,7 +14,7 @@ config SYS_BOARD
 	default "uq7_962"         if TARGET_MX6SECO_UQ7_962
 	default "uq7-j_A75"       if TARGET_MX6SECO_UQ7_J_A75
 	default "SBC_A62"         if TARGET_MX6SECO_USBC_A62
-
+	default "SBC_984"         if TARGET_MX6SECO_USBC_984
 
 
 
@@ -36,6 +36,20 @@ choice
 	config SECOMX6S
 		bool "i.MX6S"
 		select MX6S
+
+endchoice
+
+choice
+        prompt "SECO i.MX6 save device"
+
+        config ENV_MMC
+                bool "env on the eMMC"
+
+        config ENV_SPI
+                bool "env on the SPI"
+
+        config ENV_SATA
+                bool "env on the SATA "
 
 endchoice
 
@@ -69,6 +83,7 @@ config SYS_CONFIG_NAME
 	default "mx6seco_uq7_962"         if TARGET_MX6SECO_UQ7_962
 	default "mx6seco_uq7-j_A75"       if TARGET_MX6SECO_UQ7_J_A75
 	default "mx6seco_SBC_A62"         if TARGET_MX6SECO_USBC_A62
+	default "mx6seco_SBC_984"         if TARGET_MX6SECO_USBC_984
 
 
 config IMX_CONFIG
@@ -76,6 +91,7 @@ config IMX_CONFIG
 	default "board/seco/ddr/mx6_uq7_962_ram.cfg"         if TARGET_MX6SECO_UQ7_962
 	default "board/seco/ddr/mx6_uq7-j_A75_ram.cfg"       if TARGET_MX6SECO_UQ7_J_A75
 	default "board/seco/ddr/mx6_SBC_A62_ram.cfg"         if TARGET_MX6SECO_USBC_A62
+	default "board/seco/ddr/mx6_SBC_984_ram.cfg"         if TARGET_MX6SECO_USBC_984
 
 
 config DEFAULT_FDT_FILE
@@ -85,11 +101,14 @@ config DEFAULT_FDT_FILE
 	default "imx6q-seco_uq7_962.dtb"          if TARGET_MX6SECO_UQ7_962 && SECOMX6Q
 	default "imx6q-seco_uq7-j_A75.dtb"        if TARGET_MX6SECO_UQ7_J_A75 && SECOMX6Q
 	default "imx6q-seco_SBC_A62.dtb"	  if TARGET_MX6SECO_USBC_A62 && SECOMX6Q
+	default "imx6q-seco_SBC_984.dtb"	  if TARGET_MX6SECO_USBC_984 && SECOMX6Q
 	default "imx6qp-seco_SBC_A62.dtb"	  if TARGET_MX6SECO_USBC_A62 && SECOMX6QP
 	default "imx6dl-seco_quadmo747_928.dtb"   if TARGET_MX6SECO_Q7_928 && (SECOMX6DL || SECOMX6S)
 	default "imx6dl-seco_uq7_962.dtb"         if TARGET_MX6SECO_UQ7_962 && (SECOMX6DL || SECOMX6S)
 	default "imx6dl-seco_uq7-j_A75.dtb"       if TARGET_MX6SECO_UQ7_J_A75 && (SECOMX6DL || SECOMX6S)
 	default "imx6dl-seco_SBC_A62.dtb"         if TARGET_MX6SECO_USBC_A62 && (SECOMX6DL || SECOMX6S)
+	default "imx6dl-seco_SBC_984.dtb"         if TARGET_MX6SECO_USBC_984 && (SECOMX6DL || SECOMX6S)
+	
 
 
 endif

@@ -281,6 +281,18 @@ typedef struct data_boot_dev {
 #define ROOT_DEV_ID_EXT_SD    "3"
 #endif
 
+#if defined(CONFIG_TARGET_MX6SECO_USBC_984)
+#define BOOT_DEV_ID_EMMC      __stringify(CONFIG_BOOT_ID_EMMC)"\0" 
+#define BOOT_DEV_ID_U_SD      "0" 
+#define BOOT_DEV_ID_EXT_SD    "0"
+#define BOOT_DEV_ID_SPI       "0"
+#define BOOT_DEV_ID_SATA      "0"
+#define BOOT_DEV_ID_USB       "0"
+
+#define ROOT_DEV_ID_EMMC      __stringify(CONFIG_ROOT_ID_EMMC)"\0"
+#define ROOT_DEV_ID_U_SD      "0"
+#define ROOT_DEV_ID_EXT_SD    "0"
+#endif
 
 #if defined(CONFIG_TARGET_MX6SECO_UQ7_J_A75)
 #define BOOT_DEV_ID_EMMC      __stringify(CONFIG_BOOT_ID_EMMC)"\0"
@@ -427,6 +439,44 @@ static data_boot_dev_t filesystem_dev_list [] = {
 	{ DEV_SATA,     "SATA",           ENV_FS_SRC_SATA,    "",                  "" },
 };
 #endif   /*  defined(CONFIG_TARGET_MX6SECO_USBC_A62)  */
+
+/*  __________________________________________________________________________
+ * |______________________________ SBC_iMX6 (984) ____________________________|
+ */
+#if defined (CONFIG_TARGET_MX6SECO_USBC_984)
+static data_boot_dev_t kern_dev_list [] = {
+	{ DEV_EMMC,     "eMMC onboard",   ENV_KERNEL_SRC_MMC,    BOOT_DEV_ID_EMMC,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "zImage" },
+	{ DEV_SPI,      "SPI onboard",    ENV_KERNEL_SRC_SPI,    BOOT_DEV_ID_SPI,     LOAD_ADDR_KERNEL_LOCAL_DEV,   "zImage" },
+	{ DEV_TFTP,     "TFTP",           ENV_KERNEL_SRC_TFTP,   "",                  LOAD_ADDR_KERNEL_REMOTE_DEV,  "zImage" },
+	{ DEV_USB,      "USB",            ENV_KERNEL_SRC_USB,    BOOT_DEV_ID_USB,     LOAD_ADDR_KERNEL_LOCAL_DEV,   "zImage" },
+#ifdef CONFIG_MX6Q
+	{ DEV_SATA,     "SATA",           ENV_KERNEL_SRC_SATA,   BOOT_DEV_ID_SATA,    LOAD_ADDR_KERNEL_LOCAL_DEV,   "zImage" },
+#endif
+};
+
+
+static data_boot_dev_t fdt_dev_list [] = {
+	{ DEV_EMMC,     "eMMC onboard",   ENV_FDT_SRC_MMC,     BOOT_DEV_ID_EMMC,    LOAD_ADDR_FDT_LOCAL_DEV,   CONFIG_DEFAULT_FDT_FILE },
+	{ DEV_SPI,      "SPI onboard",    ENV_FDT_SRC_SPI,     BOOT_DEV_ID_SPI,     LOAD_ADDR_FDT_LOCAL_DEV,        ""  },
+	{ DEV_TFTP,     "TFTP",           ENV_FDT_SRC_TFTP,    "",                  LOAD_ADDR_FDT_REMOTE_DEV,  CONFIG_DEFAULT_FDT_FILE },
+	{ DEV_USB,      "USB",            ENV_FDT_SRC_USB,     BOOT_DEV_ID_USB,     LOAD_ADDR_FDT_LOCAL_DEV,   CONFIG_DEFAULT_FDT_FILE },
+#ifdef CONFIG_MX6Q
+	{ DEV_SATA,     "SATA",           ENV_FDT_SRC_SATA,    BOOT_DEV_ID_SATA,    LOAD_ADDR_FDT_LOCAL_DEV,   CONFIG_DEFAULT_FDT_FILE },
+#endif
+};
+
+
+static data_boot_dev_t filesystem_dev_list [] = {
+	{ DEV_EMMC,     "eMMC onboard",   ENV_FS_SRC_MMC,     ROOT_DEV_ID_EMMC,    "" },
+	{ DEV_NFS,      "NFS",            ENV_FS_SRC_NFS,     "",                  "" },
+	{ DEV_USB,      "USB",            ENV_FS_SRC_USB,     "",                  "" },
+#ifdef CONFIG_MX6Q
+	{ DEV_SATA,     "SATA",           ENV_FS_SRC_SATA,    "",                  "" },
+#endif
+};
+#endif   /* defined(CONFIG_TARGET_MX6SECO_USBC_984)  */
+
+
 
 /*  __________________________________________________________________________
  * |______________________________ uQ7_iMX6 (A75) ____________________________|
@@ -671,6 +721,12 @@ char *do_ramsize (ulong min, ulong max) {
 	#define MAX_DEVICE 2
 	#endif
 #elif defined CONFIG_TARGET_MX6SECO_USBC_A62
+	#if defined(CONFIG_MX6Q)
+	#define MAX_DEVICE 2
+	#else
+	#define MAX_DEVICE 1
+	#endif
+#elif defined CONFIG_TARGET_MX6SECO_USBC_984
 	#if defined(CONFIG_MX6Q)
 	#define MAX_DEVICE 2
 	#else

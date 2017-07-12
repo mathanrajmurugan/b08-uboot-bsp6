@@ -36,7 +36,6 @@
 #define CONFIG_SYS_USE_I2C_BUS
 #define CONFIG_SYS_USE_SATA
 #define CONFIG_SYS_USE_ETHERNET
-#define CONFIG_ENV_IS_IN_MMC
 
 
 /*  SECO COMPILATION MODULES */
@@ -176,14 +175,14 @@
   |                                ENVIRONMENT                                 |
   |____________________________________________________________________________|
 */
-
+/*
 #define ENV_MMC
-
-#ifdef ENV_MMC
+*/
+#ifdef CONFIG_ENV_MMC
 	#define CONFIG_ENV_IS_IN_MMC
-#elif ENV_SPI
-	#define CONFIG_ENV_IS_IN_FLASH
-#elif ENV_SATA
+#elif CONFIG_ENV_SPI
+	#define CONFIG_ENV_IS_IN_SPI_FLASH
+#elif CONFIG_ENV_SATA
 	#define CONFIG_ENV_IS_IN_SATA
 #endif
 
