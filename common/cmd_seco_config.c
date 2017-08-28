@@ -155,9 +155,13 @@
 #define CONSOLE_INTERFACE   \
 	"console="CONFIG_CONSOLE_DEV "," __stringify(CONFIG_BAUDRATE) "\0"
 
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+#define BOOTARGS_BASE       \
+	"setenv bootargs ${console_interface} ${memory} ${cpu_freq} ${videomode} ${serial_dev} ${audio_codec}"
+#else
 #define BOOTARGS_BASE       \
 	"setenv bootargs ${console_interface} ${memory} ${cpu_freq} ${videomode}"
-
+#endif
 
 
 /*  __________________________________________________________________________
@@ -518,6 +522,49 @@ static data_boot_dev_t filesystem_dev_list [] = {
 /*  __________________________________________________________________________
  * |__________________________________________________________________________|
  */
+
+/*  ___________________________________________________________________________
+ * |				SERIAL_DEV SPECIFICATION		      /
+   /__________________________________________________________________________|
+  */
+ 
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+#define SERIAL_DEV_PRIMARY_UART       		1
+#define SERIAL_DEV_PRIMARY_FLEXCAN        	2
+
+typedef struct serial_mode {
+    char *label;
+    int dev_uart;
+    int dev_flexcan;
+    int primary;
+} serial_mode_t;
+
+static serial_mode_t serial_mode_list [] = {
+    { "FLEXCAN",		 	-1,  0,  SERIAL_DEV_PRIMARY_FLEXCAN },
+    { "UART",           	 	 0, -1,  SERIAL_DEV_PRIMARY_UART },
+};
+
+ /*  ___________________________________________________________________________
+  * |				AUDIO_CODEC SPECIFICATION		       /
+    /__________________________________________________________________________|
+ */
+
+#define AUDIO_CODEC_PRIMARY_AC97_STANDARD       	1
+#define AUDIO_CODEC_PRIMARY_SGTL5000	        	2
+
+typedef struct codec_mode {
+    char *label;
+    int codec_ac97_standard;
+    int codec_sgtl5000;
+    int primary;
+} codec_mode_t;
+
+static codec_mode_t codec_mode_list [] = {
+    { "SGTL5000 AUDIO",		 		-1,  0,  AUDIO_CODEC_PRIMARY_SGTL5000 },
+    { "AC97_Standard ",		           	 0, -1,  AUDIO_CODEC_PRIMARY_AC97_STANDARD },
+};
+
+#endif
 
 /*  __________________________________________________________________________
  * |                                                                          |
@@ -1029,6 +1076,63 @@ int select_filesystem_souce (char *partition_id, char *nfs_path,
 
 /*  __________________________________________________________________________
  * |                                                                          |
+ * |                         SERIAL_DEV Setting Selection                     |
+ * |__________________________________________________________________________|
+ */
+
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+
+int selection_serial_mode(serial_mode_t  serial_mode_list[], int num_element) {
+    char ch;
+    int i, selection = 0;
+
+do {
+        printf ("\n __________________________________________________");
+        printf ("\n               Choose Serial_dev Setting.\n");
+        printf (" __________________________________________________\n");
+        for ( i = 0 ; i < num_element ; i++ ) {
+            printf ("%d) %s\n", i+1, serial_mode_list[i].label);
+        }
+        printf ("> ");
+        ch = getc ();
+        printf ("%c\n", ch);
+    } while ((ctoi(ch) < 1) || (ctoi(ch) > num_element));
+
+    selection = ctoi(ch) - 1;
+
+    return selection;
+}
+
+/*  __________________________________________________________________________
+ * |                                                                          |
+ * |                         AUDIO_CODEC Setting Selection                    |
+ * |__________________________________________________________________________|
+ */
+
+int selection_codec_mode(codec_mode_t  codec_mode_list[], int num_element) {
+    char ch;
+    int i, selection = 0;
+
+do {
+        printf ("\n __________________________________________________");
+        printf ("\n               Choose AUDIO_CODEC Setting.\n");
+        printf (" __________________________________________________\n");
+        for ( i = 0 ; i < num_element ; i++ ) {
+            printf ("%d) %s\n", i+1, codec_mode_list[i].label);
+        }
+        printf ("> ");
+        ch = getc ();
+        printf ("%c\n", ch);
+    } while ((ctoi(ch) < 1) || (ctoi(ch) > num_element));
+
+    selection = ctoi(ch) - 1;
+
+    return selection;
+}
+#endif
+
+/*  __________________________________________________________________________
+ * |                                                                          |
  * |                         VIDEO Settings Selection                         |
  * |__________________________________________________________________________|
  */
@@ -1146,6 +1250,23 @@ static int do_seco_config (cmd_tbl_t *cmdtp, int flag, int argc, char * const ar
 	char video_lvds2_video[80];
 	char video_mode[300];
 
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+ 	
+	/*  for serial_dev  */
+	int set_serial_dev = 0;
+	int serial_mode_selection;
+	char serial_uart_dev[80];
+	char serial_flexcan_dev[80];
+	char serial_mode[300];
+
+	/*  for audio_codec  */
+	int set_audio_codec = 0;
+	int codec_mode_selection;
+	char codec_ac97_standard_audio[80];
+	char codec_sgtl5000_audio[80];
+	char codec_mode[300];
+
+#endif
 
 	if (argc > 2)
 		return cmd_usage (cmdtp);
@@ -1180,6 +1301,17 @@ static int do_seco_config (cmd_tbl_t *cmdtp, int flag, int argc, char * const ar
 		if (strcmp(argv[1], "video") == 0) {
 			set_video = 1;
 		}
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+		
+		if (strcmp(argv[1], "serial_dev") ==0) {
+			set_serial_dev = 1;
+		}
+
+		if (strcmp(argv[1], "audio_codec") ==0) {
+			set_audio_codec = 1;
+		}
+
+#endif
 
 	}
 
@@ -1190,6 +1322,10 @@ static int do_seco_config (cmd_tbl_t *cmdtp, int flag, int argc, char * const ar
 		set_fdt = 1;
 		set_filesystem = 1;
 		set_video = 1;
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+		set_serial_dev = 1;
+		set_audio_codec = 1;
+#endif
 	}
 
 
@@ -1347,6 +1483,79 @@ static int do_seco_config (cmd_tbl_t *cmdtp, int flag, int argc, char * const ar
 		SAVE_FILESYSTEM_ROOT(filesystem_boot_string);
 	}
 
+
+	/*  _______________________________________________________________________________
+	 * |_____________________________ SERIAL_DEV SETTING ______________________________|
+	 */
+	
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+
+	if ( set_serial_dev ) {
+			serial_mode_selection =  selection_serial_mode (serial_mode_list,
+					ARRAY_SIZE(serial_mode_list));	
+
+		if ( serial_mode_list [serial_mode_selection].dev_uart >= 0 ) {
+			sprintf (serial_uart_dev, "serial_dev=uart");
+
+	
+		} else
+			sprintf (serial_uart_dev, " ");
+
+		if (serial_mode_list [serial_mode_selection].dev_flexcan >= 0 ) {
+			sprintf (serial_flexcan_dev, "serial_dev=flexcan");
+
+		} else
+			sprintf (serial_flexcan_dev, " ");
+		
+		sprintf (serial_mode, "%s%s", serial_uart_dev, serial_flexcan_dev);
+
+		if (strcmp (serial_uart_dev, " ") ) {
+			setenv ("serial_uart", serial_uart_dev);
+		}
+		
+		if (strcmp (serial_flexcan_dev, " ") ) {
+			setenv ("serial_flexcan", serial_flexcan_dev);
+		}
+
+		setenv ("serial_dev", serial_mode);
+	} 
+
+	/*  ________________________________________________________________________________
+	 * |_____________________________ AUDIO_CODEC SETTING ______________________________|
+	 */
+
+	if ( set_audio_codec ) {
+			codec_mode_selection =  selection_codec_mode (codec_mode_list,
+					ARRAY_SIZE(codec_mode_list));	
+
+		if ( codec_mode_list [codec_mode_selection].codec_ac97_standard >= 0 ) {
+			sprintf (codec_ac97_standard_audio, "audio_codec=ac97_standard");
+
+	
+		} else
+			sprintf (codec_ac97_standard_audio, " ");
+
+		if (codec_mode_list [codec_mode_selection].codec_sgtl5000 >= 0 ) {
+			sprintf (codec_sgtl5000_audio, "audio_codec=sgtl5000");
+
+		} else
+			sprintf (codec_sgtl5000_audio, " ");
+		
+		sprintf (codec_mode, "%s %s", codec_ac97_standard_audio, codec_sgtl5000_audio);
+
+		if (strcmp (codec_ac97_standard_audio, " ") ) {
+			setenv ("codec_ac97_standard", codec_ac97_standard_audio);
+		}
+		
+		if (strcmp (codec_sgtl5000_audio, " ") ) {
+			setenv ("codec_sgtl5000", codec_sgtl5000_audio);
+		}
+
+		setenv ("audio_codec", codec_mode);
+	} 
+
+#endif
+
 	/*  __________________________________________________________________________
 	 * |_____________________________ VIDEO SETTING ______________________________|
 	 */
@@ -1427,4 +1636,8 @@ U_BOOT_CMD(
 	"seco_config [fdtsrc]  - set FDT source device.\n"
 	"seco_config [fssrc]   - set FileSystem source device.\n"
 	"seco_config [video]   - set video usage mode\n"
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+	"seco_config [serial_dev] - select the serial_dev function.\n"
+	"seco_config [audio_codec] - select the audio_codec function.\n"
+#endif
 );

@@ -70,7 +70,7 @@ choice
 		bool "1GB (4x256MB)"
 
 	config SECOMX6_2GB_4x512
-		bool "2GB (2x512MB)"
+		bool "2GB (4x512MB)"
 
 	config SECOMX6_4GB_8x512
 		bool "4GB (8x512MB)"

@@ -423,15 +423,23 @@
 #define CONFIG_ROOT_DEV_ID       2
 #define CONFIG_ROOT_PARTITION    2
 
-#define CONFIG_BOOTARGS_BASE  "setenv bootargs ${console_interface} ${memory} ${cpu_freq} ${videomode} ${root_dev}"
+#define CONFIG_BOOTARGS_BASE  "setenv bootargs ${console_interface} ${memory} ${cpu_freq} ${videomode} ${root_dev} ${serial_dev} ${audio_codec}"
 
-
+#if defined CONFIG_TARGET_MX6SECO_Q7_928 || CONFIG_TARGET_MX6SECO_UQ7_962 || CONFIG_TARGET_MX6SECO_UQ7_J_A75
+#define CONFIG_ENV_COMMON                                        \
+	"bootdelay="__stringify(CONFIG_BOOTDELAY)"\0"            \
+	"stdin=serial\0"                                         \
+	"stdout=serial\0"                                        \
+	"stderr=serial\0"					 \
+	"serial_dev=serial_dev=uart\0"				 \
+	"audio_codec=audio_codec=ac97_standard\0"
+#else
 #define CONFIG_ENV_COMMON                                        \
 	"bootdelay="__stringify(CONFIG_BOOTDELAY)"\0"            \
 	"stdin=serial\0"                                         \
 	"stdout=serial\0"                                        \
 	"stderr=serial\0"
-
+#endif
 
 #define CONFIG_ENV_BOOTARG_BASE                                                                               \
 	"console_interface='console=" CONFIG_CONSOLE_DEV "," __stringify(CONFIG_BAUDRATE)"'\0"                \
