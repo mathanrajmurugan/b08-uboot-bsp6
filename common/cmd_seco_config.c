@@ -605,12 +605,12 @@ static video_mode_t video_mode_list [] = {
 
 
 static lvds_video_spec_t lvds_video_spec_list [] = {
-	{ "WVGA	  [800x480]",   "LDB-WVGA",    "RGB666",      "datamap=jeida",    1 },
-	{ "SVGA	  [800x600]",   "LDB-SVGA",    "RGB666",      "datamap=jeida",    1 },
-	{ "XGA	  [1024x768]",  "LDB-XGA",     "RGB666",      "datamap=jeida",    1 },
-	{ "WXGA	  [1368x768]",  "LDB-WXGA",    "RGB24",       "datamap=jeida",    1 },
+	{ "WVGA	  [800x480]",   "LDB-WVGA",    "RGB666",      "datamap=spwg",    1 },
+	{ "SVGA	  [800x600]",   "LDB-SVGA",    "RGB666",      "datamap=spwg",    1 },
+	{ "XGA	  [1024x768]",  "LDB-XGA",     "RGB666",      "datamap=spwg",    1 },
+	{ "WXGA	  [1368x768]",  "LDB-WXGA",    "RGB24",       "datamap=spwg",    1 },
 	{ "WXGAP60[1280x800]",  "LDB-1280P60", "RGB24,bpp=32","datamap=spwg",    1 },
-	{ "SXGA	  [1280x1024]", "LDB-SXGA",    "RGB24",       "datamap=jeida",    1 },
+	{ "SXGA	  [1280x1024]", "LDB-SXGA",    "RGB24",       "datamap=spwg",    1 },
 	{ "HD1080 [1920x1080]", "LDB-1080P60", "RGB24",  "ldb=spl0", 2 },
 };
 
