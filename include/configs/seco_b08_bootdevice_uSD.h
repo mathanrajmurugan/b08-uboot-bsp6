@@ -1,0 +1,1 @@
+#define CONFIG_ENV_IS_IN_MMC
